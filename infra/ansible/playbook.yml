@@ -1,0 +1,50 @@
+- name: Configure EC2 instance as web server and copy HTML and CSS files
+  hosts: webserver
+  become: yes
+  gather_facts: no
+
+  tasks:
+    - name: Wait for SSH connectivity
+      wait_for_connection:
+        delay: 10
+        timeout: 300
+
+    - name: Install Apache web server
+      yum:
+        name: httpd
+        state: present
+
+    - name: Enable Apache service
+      systemd:
+        name: httpd
+        enabled: yes
+        state: started
+
+    - name: Load instance details from file
+      include_vars:
+        file: ../terraform/instance-details.json
+      register: instance_details
+
+    - name: Fetch instance's mac-address
+      shell: 'TOKEN=`curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` && curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/mac'
+      register: get_mac_address
+
+    # - debug:
+    #     var: get_mac_address.stdout
+
+    - name: Update HTML file with instance details
+      template:
+        src: ../../app/website/index.html.j2
+        dest: /var/www/html/index.html
+        mode: 0644
+      vars:
+        public_ip: "{{ instance_details['public_ip'] }}"
+        instance_id: "{{ instance_details['instance_id'] }}"
+        mac_address: "{{ get_mac_address.stdout }}"
+      notify: Restart httpd service
+
+  handlers:
+    - name: Restart httpd service
+      service:
+        name: httpd
+        state: restarted
