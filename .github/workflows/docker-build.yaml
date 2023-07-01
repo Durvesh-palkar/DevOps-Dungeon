@@ -3,8 +3,8 @@ name: Docker Build and Terraform Update
 on:
   push:
     paths:
-      - Dockerfile
-      - 'index.html'
+      - ./ECS-ELB-Integration/Dockerfile
+      - ./ECS-ELB-Integration/index.html
 
 jobs:
   build-and-deploy:
