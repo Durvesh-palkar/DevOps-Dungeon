@@ -2,11 +2,11 @@ name: Docker Build and Terraform Update
 
 on:
   push:
-    # paths:
-    #   - ./ECS-ELB-Integration/Dockerfile
-    #   - ./ECS-ELB-Integration/index.html
-    branches:
-      - "ecs-elb-task"
+    paths:
+      - 'ECS-ELB-Integration/Dockerfile'
+      - 'ECS-ELB-Integration/index.html'
+    # branches:
+    #   - "ecs-elb-task"
 
 jobs:
   build-and-deploy:
