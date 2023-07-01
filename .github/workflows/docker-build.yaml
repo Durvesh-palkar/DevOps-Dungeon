@@ -45,4 +45,4 @@ jobs:
         run: |
           cd ECS-ELB-Integration/infra/
           terraform init
-          terraform apply -var="image_tag=${IMAGE_TAG}" -auto-approve
+          terraform apply -var="image_tag=${IMAGE_TAG}" -var-file=demo.tfvars -auto-approve
