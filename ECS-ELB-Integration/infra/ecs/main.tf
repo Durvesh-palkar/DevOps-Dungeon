@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "main" {
     [
       {
         name      = "${var.name}-container"
-        image     = "aws_ecr_repository.main.repository_url:${var.image_tag}"
+        image     = "${aws_ecr_repository.main.repository_url}:${var.image_tag}"
         essential = true
         portMappings = [{
           protocol      = "tcp"
